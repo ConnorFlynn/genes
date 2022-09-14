@@ -19,6 +19,8 @@ library(here)
 library(tidyverse)
 library(dplyr)
 library(lubridate)
+library(date)
+library(anytime)
 ```
 
 ```{r}
@@ -128,7 +130,15 @@ paper_data_country <- paper_data %>%
 
 
 ```{r}
-paper_data_country$pubdate <- lubridate::ymd(paper_data_country$pubdate, truncated = 2L)
+# paper_data_country$pubdate <- lubridate::ymd(paper_data_country$pubdate, truncated = 2L)
+
+#period
+
+per <- duration(years = 1) 
+
+paper_data_country$pubdate <- as.Date(ymd(paper_data_country$pubdate, truncated = 2L))
+
+
 ```
 
 ```{r}
@@ -206,6 +216,35 @@ selectedData <- paper_data_country[paper_data_country$pubdate == "2002-01-01", ]
 world_spdf$publications <- selectedData$n[match(world_spdf$ISO2, selectedData$Country_code)]
 ```
 
+
+```{r}
+# d = as.Date("2016-07-21")
+# 
+# format(d,"%Y")
+# 
+# #paper_data_country$pubdate <- format(paper_data_country$pubdate, "%Y")
+# 
+# paper_data_country$pubdate <- as.Date(paper_data_country$pubdate, "%Y")
+
+
+```
+
+
+
+```{r}
+# paper_data_country <- paper_data_country %>% 
+#   mutate(Year= format(pubdate, format = "%Y"))
+# 
+# paper_data_country$Year <- as.POSIXct(paper_data_country$Year, format = "%Y")
+# 
+# paper_data_country$Year <- year(paper_data_country$Year)
+
+```
+
+
+
+
+
 ```{r}
 #create label texts
 world_spdf@data$LabelText <- paste0(
@@ -274,8 +313,8 @@ server <- function(input, output, session) {
                   min = min(eligibleDates),
                   max = max(eligibleDates),
                   value = min(eligibleDates),
-                  step = stepSize,
-                  timeFormat = "%y, %m, %d",
+                  step = per,
+                  timeFormat = "%Y-%m-%d",
                   animate = animationOptions(interval = 500, loop = FALSE)
       )
     })
